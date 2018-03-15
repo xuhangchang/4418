@@ -9,8 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <term.h>
-#include <curses.h>
+//#include <term.h>
+//#include <curses.h>
 
 #pragma pack(1)
 typedef struct IDCardData {
