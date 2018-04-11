@@ -1,0 +1,128 @@
+MODEM(00) 				专用数据业务端口
+TTY(01 NMEA) 			GPS/BD 数据输出端口
+TTY(02 AT) 				AT 指令端口
+Diag(03) 					诊断口
+
+
+/dev/ttyUSB0				MODEM端口
+/dev/ttyUSB2 				AT端口 
+
+AT+CPIN?				 //查询 SIM 是否识别
+AT+CSQ 					//查询当前信号强度
+AT+CGATT? 			//查询数据业务附着状态
+AT$MYSYSINFO 		//查询当前注册的网络制式
+
+
+                                                                  
+echo -e "AT+CGMR\r\n" >/dev/ttyUSB0
+cat /dev/ttyUSB0
+
+
+echo -e "AT+ENPWRSAVE?\r\n" >/dev/ttyUSB0		//0：不允许进入休眠模式      1：允许进入休眠模式
+echo -e "AT+CPIN?\r\n" >/dev/ttyUSB0 				//查询 SIM 是否识别
+echo -e "AT+CSQ\r\n" >/dev/ttyUSB0					//查询当前信号强度
+echo -e "AT+CGATT?\r\n" >/dev/ttyUSB0				//查询数据业务附着状态
+echo -e "AT$MYSYSINFO\r\n" >/dev/ttyUSB0    //查询当前注册的网络制式
+
+
+
+
+执行命令“ pppd call gprs-dial”，拨号上网。
+
+*-----------------------------------------------------------------------*
+|									pppd call gprs-dial &																	|
+|									route add default gw  10.53.78.236										|
+|									ping 115.239.210.27 				// www.baidu.com					|
+|																																				|
+*-----------------------------------------------------------------------*
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+root@FriendlyARM:~# pppd call gprs-dial &                                                                              
+[1] 494
+root@FriendlyARM:~# pppd options in effect:
+debug           # (from /etc/ppp/peers/gprs-dial)
+nodetach                # (from /etc/ppp/peers/gprs-dial)
+dump            # (from /etc/ppp/peers/gprs-dial)
+noauth          # (from /etc/ppp/peers/gprs-dial)
+user card               # (from /etc/ppp/peers/gprs-dial)
+password ??????         # (from /etc/ppp/peers/gprs-dial)
+remotename cmnet                # (from /etc/ppp/peers/gprs-dial)
+/dev/ttyUSB0            # (from /etc/ppp/peers/gprs-dial)
+115200          # (from /etc/ppp/peers/gprs-dial)
+lock            # (from /etc/ppp/peers/gprs-dial)
+connect /usr/sbin/chat -s -v -f /etc/ppp/peers/gprs-chat                # (from /etc/ppp/peers/gprs-dial)
+local           # (from /etc/ppp/peers/gprs-dial)
+hide-password           # (from /etc/ppp/peers/gprs-dial)
+ipparam cmnet           # (from /etc/ppp/peers/gprs-dial)
+noipdefault             # (from /etc/ppp/peers/gprs-dial)
+usepeerdns              # (from /etc/ppp/peers/gprs-dial)
+timeout set to 5 seconds
+abort on (BUSY)
+abort on (DELAYED)
+abort on (ERROR)
+abort on (NODIALTONE)
+abort on (NOCARRIER)
+timeout set to 5 seconds
+send (AT^M)
+expect (OK)
+AT^M^M
+OK
+ -- got it
+
+send (AT+CSQ^M)
+expect (OK)
+^M
+AT+CSQ^M^M
++CSQ: 13,99^M
+OK
+ -- got it
+
+send (AT+CGDCONT=1,"IP","3gnet"^M)
+expect (OK)
+^M
+AT+CGDCONT=1,"IP","3gnet"^M^M
+OK
+ -- got it
+
+send (ATD*99#^M)
+expect (CONNECT)
+^M
+ATD*99#^M^M
+CONNECT
+ -- got it
+
+send (^M)
+Script /usr/sbin/chat -s -v -f /etc/ppp/peers/gprs-chat finished (pid 495), status = 0x0
+Serial connection established.
+using channel 1
+Using interface ppp0
+Connect: ppp0 <--> /dev/ttyUSB0
+sent [LCP ConfReq id=0x1 <asyncmap 0x0> <magic 0x9bd24af> <pcomp> <accomp>]
+rcvd [LCP ConfReq id=0x0 <asyncmap 0x0> <auth pap> <magic 0xd1a808a8> <pcomp> <accomp>]
+sent [LCP ConfAck id=0x0 <asyncmap 0x0> <auth pap> <magic 0xd1a808a8> <pcomp> <accomp>]
+rcvd [LCP ConfAck id=0x1 <asyncmap 0x0> <magic 0x9bd24af> <pcomp> <accomp>]
+sent [PAP AuthReq id=0x1 user="card" password=<hidden>]
+rcvd [LCP DiscReq id=0x1 magic=0xd1a808a8]
+rcvd [PAP AuthAck id=0x1 ""]
+PAP authentication succeeded
+sent [CCP ConfReq id=0x1 <deflate 15> <deflate(old#) 15> <bsd v1 15>]
+sent [IPCP ConfReq id=0x1 <compress VJ 0f 01> <addr 0.0.0.0> <ms-dns1 0.0.0.0> <ms-dns2 0.0.0.0>]
+rcvd [LCP ProtRej id=0x2 80 fd 01 01 00 0f 1a 04 78 00 18 04 78 00 15 03 2f]
+Protocol-Reject for 'Compression Control Protocol' (0x80fd) received
+rcvd [IPCP ConfReq id=0x0]
+sent [IPCP ConfNak id=0x0 <addr 0.0.0.0>]
+rcvd [IPCP ConfRej id=0x1 <compress VJ 0f 01>]
+sent [IPCP ConfReq id=0x2 <addr 0.0.0.0> <ms-dns1 0.0.0.0> <ms-dns2 0.0.0.0>]
+rcvd [IPCP ConfReq id=0x1]
+sent [IPCP ConfAck id=0x1]
+rcvd [IPCP ConfNak id=0x2 <addr 10.144.145.64> <ms-dns1 221.12.1.227> <ms-dns2 221.12.33.227>]
+sent [IPCP ConfReq id=0x3 <addr 10.144.145.64> <ms-dns1 221.12.1.227> <ms-dns2 221.12.33.227>]
+rcvd [IPCP ConfAck id=0x3 <addr 10.144.145.64> <ms-dns1 221.12.1.227> <ms-dns2 221.12.33.227>]
+Could not determine remote IP address: defaulting to 10.64.64.64
+local  IP address 10.144.145.64
+remote IP address 10.64.64.64
+primary   DNS address 221.12.1.227
+secondary DNS address 221.12.33.227
+
+

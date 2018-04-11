@@ -1,0 +1,6 @@
+ABORT "ERROR"
+ABORT "NODIALTONE"
+SAY "\NSending break to the modem\n"
+""\k"
+""+++ATH"
+SAY "\nGood bye\n"
